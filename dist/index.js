@@ -30867,12 +30867,12 @@ const github = __nccwpck_require__(2835);
 const fs = __nccwpck_require__(7147);
 const path = __nccwpck_require__(1017); // maybe not?
 
-async function* walk(directory, filter = (_file) => true) {
+async function* walk(directory) {
     for await (const d of await fs.promises.opendir(directory)) {
         const entry = path.join(directory, d.name);
         if (d.isDirectory())
-            yield* walk(entry, filter);
-        else if (d.isFile() && filter(entry))
+            yield* walk(entry);
+        else if (d.isFile())
             yield entry;
     }
 };
@@ -30897,8 +30897,9 @@ const main = async () => {
         (file) => filesExcludeRegex.test(file);
     const fileFilter = (file) => fileIncludeFilter(file) && !fileExcludeFilter(file);
 
-    for await (const file of walk('.', fileFilter))
-        console.log(file);
+    for await (const file of walk('.'))
+        if (fileFilter(file))
+            console.log(file);
 
     core.setOutput("count", 0);
     // TODO: count-diff?

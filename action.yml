@@ -1,0 +1,22 @@
+name: todo-counter
+author: Dimitar Rusev
+description: Counts the TODOs in your code
+inputs:
+  include-files:
+    description: Regular expression of files to check for TODOs
+    required: false
+    default: '.*'
+  # TODO: exclude files
+  todo-regex:
+    description: Regular expression of strings to search for
+    required: false
+    default: 'TODO:'
+outputs:
+  count:
+    description: Count of TODOs
+runs:
+  using: node20
+  main: 'main.js'
+branding:
+  icon: file-text
+  color: purple

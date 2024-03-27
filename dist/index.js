@@ -30882,8 +30882,8 @@ const main = async () => {
     const inputFilesIncludeRegex = core.getInput('include-files');
     const inputFilesExcludeRegex = core.getInput('exclude-files');
     let todoRegex = new RegExp(inputTodoRegex);
-    let filesIncludeRegex = new RegExp(inputFilesExcludeRegex);
-    let filesExcludeRegex = new RegExp(inputFilesIncludeRegex);
+    let filesIncludeRegex = new RegExp(inputFilesIncludeRegex);
+    let filesExcludeRegex = new RegExp(inputFilesExcludeRegex);
 
     console.log(`re1: ${todoRegex}`);
     console.log(`re2: ${filesIncludeRegex}`);

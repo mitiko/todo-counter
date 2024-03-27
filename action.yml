@@ -3,10 +3,11 @@ author: Dimitar Rusev
 description: Counts the TODOs in your code
 inputs:
   include-files:
-    description: Regular expression of files to check for TODOs
+    description: Regular expression of files to include when checking for TODOs. Will not respect .gitignore
     required: false
-    default: '.*'
-  # TODO: exclude files
+  exclude-files:
+    description: Regular expression of files to exclude when checking for TODOs
+    required: false
   todo-regex:
     description: Regular expression of strings to search for
     required: false

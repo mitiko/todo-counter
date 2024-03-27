@@ -9,7 +9,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Count TODOs
         id: this
-        uses: mitiko/todo-counter@f56f0abaae5382ae04f914c1aeeaab8df761d5a3
+        uses: mitiko/todo-counter@67ebf47e8c2ff48e1d4e290c4affc43b55535d12
         with:
           todo-regex: 'TODO:'
           include-files: '\.json$'

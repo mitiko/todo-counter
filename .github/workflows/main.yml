@@ -1,0 +1,16 @@
+on: [push]
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    name: Run Action
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Count TODOs
+        id: this
+        uses: mitiko/todo-counter@e3b828ea343ec62e532f5498077d162101f898d5
+        with:
+          todo-regex: 'TODO:'
+      - name: Print count
+        run: echo "The count was ${{ steps.this.outputs.count }}"

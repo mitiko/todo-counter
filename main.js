@@ -17,7 +17,7 @@ const main = async () => {
     const inputTodoRegex = core.getInput('todo-regex');
     const inputFilesIncludeRegex = core.getInput('include-files');
     const inputFilesExcludeRegex = core.getInput('exclude-files');
-    let todoRegex = new RegExp(inputTodoRegex);
+    let todoRegex = new RegExp(inputTodoRegex, 'gm');
     let filesIncludeRegex = new RegExp(inputFilesIncludeRegex);
     let filesExcludeRegex = new RegExp(inputFilesExcludeRegex);
 
@@ -33,11 +33,16 @@ const main = async () => {
         (file) => filesExcludeRegex.test(file);
     const fileFilter = (file) => fileIncludeFilter(file) && !fileExcludeFilter(file);
 
-    for await (const file of walk('.'))
-        if (fileFilter(file))
-            console.log(file);
+    let count = 0;
+    for await (const file of walk('.')) {
+        if (!fileFilter(file))
+            continue;
 
-    core.setOutput("count", 0);
+        const contents = await fs.promises.readFile(file, { encoding: 'utf8' });
+        count += (contents.match(todoRegex) || []).length;
+    }
+
+    core.setOutput("count", count);
     // TODO: count-diff?
 
     // // Get the JSON webhook payload for the event that triggered the workflow

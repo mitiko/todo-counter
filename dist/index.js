@@ -30864,17 +30864,48 @@ var __webpack_exports__ = {};
 (() => {
 const core = __nccwpck_require__(9935);
 const github = __nccwpck_require__(2835);
+const fs = __nccwpck_require__(7147);
+const path = __nccwpck_require__(1017); // maybe not?
 
-const main = () => {
-    const todoRegex = core.getInput('todo-regex');
-    console.log(`Regex: '${todoRegex}'`);
+async function* walk(directory, filter = (_file) => true) {
+    for await (const d of await fs.promises.opendir(directory)) {
+        const entry = path.join(directory, d.name);
+        if (d.isDirectory())
+            yield* walk(entry, filter);
+        else if (d.isFile() && filter(entry))
+            yield entry;
+    }
+};
+
+const main = async () => {
+    const inputTodoRegex = core.getInput('todo-regex');
+    const inputFilesIncludeRegex = core.getInput('include-files');
+    const inputFilesExcludeRegex = core.getInput('exclude-files');
+    let todoRegex = new RegExp(inputTodoRegex);
+    let filesIncludeRegex = new RegExp(inputFilesIncludeRegex);
+    let filesExcludeRegex = new RegExp(inputFilesExcludeRegex);
+
+    console.log(`re1: ${todoRegex}`);
+    console.log(`re2: ${filesIncludeRegex}`);
+    console.log(`re3: ${filesExcludeRegex}`);
+
+    const fileIncludeFilter = inputFilesIncludeRegex == '' ?
+        (_) => true :
+        (file) => filesIncludeRegex.test(file);
+    const fileExcludeFilter = inputFilesExcludeRegex == '' ?
+        (_) => false :
+        (file) => filesExcludeRegex.test(file);
+    const fileFilter = (file) => fileIncludeFilter(file) && !fileExcludeFilter(file);
+
+    for await (const file of walk('.', fileFilter))
+        console.log(file);
 
     core.setOutput("count", 0);
     // TODO: count-diff?
 
-    // Get the JSON webhook payload for the event that triggered the workflow
-    const payload = JSON.stringify(github.context.payload, undefined, 2)
-    console.log(`The event payload: ${payload}`);
+    // // Get the JSON webhook payload for the event that triggered the workflow
+    // const payload = JSON.stringify(github.context.payload, undefined, 2)
+    // console.log(`The event payload: ${payload}`);
 };
 
 try {

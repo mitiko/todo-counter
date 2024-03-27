@@ -15,8 +15,8 @@ async function* walk(directory, filter = (_file) => true) {
 
 const main = async () => {
     const inputTodoRegex = core.getInput('todo-regex');
-    const inputFilesIncludeRegex = core.getInput('files-include');
-    const inputFilesExcludeRegex = core.getInput('files-exclude');
+    const inputFilesIncludeRegex = core.getInput('include-files');
+    const inputFilesExcludeRegex = core.getInput('exclude-files');
     let todoRegex = new RegExp(inputTodoRegex);
     let filesIncludeRegex = new RegExp(inputFilesExcludeRegex);
     let filesExcludeRegex = new RegExp(inputFilesIncludeRegex);

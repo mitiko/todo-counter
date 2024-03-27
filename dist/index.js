@@ -30884,8 +30884,6 @@ const main = async () => {
     let todoRegex = new RegExp(inputTodoRegex);
     let filesIncludeRegex = new RegExp(inputFilesExcludeRegex);
     let filesExcludeRegex = new RegExp(inputFilesIncludeRegex);
-    filesIncludeRegex = /.*\.js$/;
-    filesExcludeRegex = /^node_modules/;
 
     console.log(`re1: ${todoRegex}`);
     console.log(`re2: ${filesIncludeRegex}`);

@@ -12,5 +12,6 @@ jobs:
         uses: mitiko/todo-counter@f56f0abaae5382ae04f914c1aeeaab8df761d5a3
         with:
           todo-regex: 'TODO:'
+          include-files: '\.json$'
       - name: Print count
         run: echo "The count was ${{ steps.this.outputs.count }}"

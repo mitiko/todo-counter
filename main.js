@@ -14,10 +14,14 @@ async function* walk(directory) {
 };
 
 const main = async () => {
-    const inputTodoRegex = core.getInput('todo-regex');
-    const inputFilesIncludeRegex = core.getInput('include-files');
-    const inputFilesExcludeRegex = core.getInput('exclude-files');
-    let todoRegex = new RegExp(inputTodoRegex, 'gm');
+    let inputTodoRegex = core.getInput('todo-regex');
+    let inputFilesIncludeRegex = core.getInput('include-files');
+    let inputFilesExcludeRegex = core.getInput('exclude-files');
+    // if (inputFilesExcludeRegex == '')
+    //     inputFilesExcludeRegex = '^(\.git|node_modules)'
+    // if (inputTodoRegex == '')
+    //     inputTodoRegex = 'TODO:'
+    let todoRegex = new RegExp(inputTodoRegex);
     let filesIncludeRegex = new RegExp(inputFilesIncludeRegex);
     let filesExcludeRegex = new RegExp(inputFilesExcludeRegex);
 
@@ -39,7 +43,10 @@ const main = async () => {
             continue;
 
         const contents = await fs.promises.readFile(file, { encoding: 'utf8' });
-        count += (contents.match(todoRegex) || []).length;
+        const addCount = (contents.match(todoRegex) || []).length;
+        if (addCount > 0)
+            console.log('count for ', file, addCount);
+        count += addCount;
     }
 
     core.setOutput("count", count);

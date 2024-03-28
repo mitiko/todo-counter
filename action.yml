@@ -8,6 +8,7 @@ inputs:
   exclude-files:
     description: Regular expression of files to exclude when checking for TODOs
     required: false
+    default: '^(\.git|node_modules)'
   todo-regex:
     description: Regular expression of strings to search for
     required: false

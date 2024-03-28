@@ -14,16 +14,13 @@ async function* walk(directory) {
 };
 
 const main = async () => {
-    let inputTodoRegex = core.getInput('todo-regex');
-    let inputFilesIncludeRegex = core.getInput('include-files');
-    let inputFilesExcludeRegex = core.getInput('exclude-files');
-    // if (inputFilesExcludeRegex == '')
-    //     inputFilesExcludeRegex = '^(\.git|node_modules)'
-    // if (inputTodoRegex == '')
-    //     inputTodoRegex = 'TODO:'
-    let todoRegex = new RegExp(inputTodoRegex);
-    let filesIncludeRegex = new RegExp(inputFilesIncludeRegex);
-    let filesExcludeRegex = new RegExp(inputFilesExcludeRegex);
+    const inputTodoRegex = core.getInput('todo-regex');
+    const inputFilesIncludeRegex = core.getInput('include-files');
+    const inputFilesExcludeRegex = core.getInput('exclude-files');
+
+    const todoRegex = new RegExp(inputTodoRegex);
+    const filesIncludeRegex = new RegExp(inputFilesIncludeRegex);
+    const filesExcludeRegex = new RegExp(inputFilesExcludeRegex);
 
     console.log(`re1: ${todoRegex}`);
     console.log(`re2: ${filesIncludeRegex}`);
@@ -43,10 +40,7 @@ const main = async () => {
             continue;
 
         const contents = await fs.promises.readFile(file, { encoding: 'utf8' });
-        const addCount = (contents.match(todoRegex) || []).length;
-        if (addCount > 0)
-            console.log('count for ', file, addCount);
-        count += addCount;
+        count += (contents.match(todoRegex) || []).length;
     }
 
     core.setOutput("count", count);

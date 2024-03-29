@@ -49,7 +49,7 @@ const main = async () => {
     }
 
     const octokit = github.getOctokit(inputGitHubToken);
-    const comments = octokit.rest.issues.listComments({
+    const { data: comments } = await octokit.rest.issues.listComments({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         issue_number: github.context.issue.number,
@@ -61,14 +61,14 @@ const main = async () => {
     const body = `TODO count: ${count}`;
 
     if (botComment !== undefined) {
-        octokit.rest.issues.updateComment({
+        await octokit.rest.issues.updateComment({
             comment_id: botComment.id,
             owner: github.context.repo.owner,
             repo: github.context.repo.repo,
             body: body,
         })
     } else {
-        octokit.rest.issues.createComment({
+        await octokit.rest.issues.createComment({
             issue_number: github.context.issue.number,
             owner: github.context.repo.owner,
             repo: github.context.repo.repo,

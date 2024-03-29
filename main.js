@@ -31,15 +31,19 @@ const main = async () => {
 
     const fileFilter = (file) => filesIncludeRegex.test(file) && !filesExcludeRegex.test(file);
 
-    let count = 0;
+    let totalCount = 0;
     for await (const file of walk('.')) {
         if (inputDebug == 'true') console.log(`checking file: ${file}`);
         if (!fileFilter(file)) continue;
+
         const contents = await fs.promises.readFile(file, { encoding: 'utf8' });
-        count += (contents.match(todoRegex) || []).length;
+        let count = (contents.match(todoRegex) || []).length;
+
+        if (inputDebug == 'true') console.log(`${file} -> ${count}`);
+        totalCount += count;
     }
 
-    core.setOutput("count", count);
+    core.setOutput("count", totalCount);
 
     if (inputSkipComment == 'true') {
         console.log('Skipping comment.');
@@ -60,9 +64,10 @@ const main = async () => {
         return comment.body.includes("TODO count:")
     });
 
-    const body = `TODO count: ${count}`;
+    const body = `TODO count: ${totalCount}`;
 
     if (botComment !== undefined) {
+        if (inputDebug == 'true') console.log(`comment ${botComment.id} found, updating...`);
         await octokit.rest.issues.updateComment({
             comment_id: botComment.id,
             owner: github.context.repo.owner,
@@ -70,6 +75,7 @@ const main = async () => {
             body: body,
         })
     } else {
+        if (inputDebug == 'true') console.log(`no TODO comment found, creating...`);
         await octokit.rest.issues.createComment({
             issue_number: github.context.issue.number,
             owner: github.context.repo.owner,

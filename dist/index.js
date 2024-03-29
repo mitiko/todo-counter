@@ -30883,6 +30883,7 @@ const main = async () => {
     const inputFilesExcludeRegex = core.getInput('exclude-files');
     const inputGitHubToken = core.getInput('github-token');
     const inputSkipComment = core.getInput('skip-comment');
+    const inputDebug = core.getInput('debug');
 
     const todoRegex = new RegExp(inputTodoRegex);
     const filesIncludeRegex = new RegExp(inputFilesIncludeRegex);
@@ -30896,6 +30897,7 @@ const main = async () => {
 
     let count = 0;
     for await (const file of walk('.')) {
+        if (inputDebug == 'true') console.log(`checking file: ${file}`);
         if (!fileFilter(file)) continue;
         const contents = await fs.promises.readFile(file, { encoding: 'utf8' });
         count += (contents.match(todoRegex) || []).length;

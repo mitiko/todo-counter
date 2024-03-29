@@ -24,6 +24,10 @@ inputs:
     description: Whether or not to skip commenting on the PR
     default: false
     required: false
+  debug:
+    description: More verbose output
+    default: ${{ runner.debug == '1' }}
+    required: false
 outputs:
   count:
     description: Count of TODOs

@@ -12,9 +12,10 @@
   },
   "keywords": [
     "github",
-    "actions"
+    "actions",
+    "todo"
   ],
-  "author": "Dimitar Rusev",
+  "author": "Dimitar Rusev <mitikodev@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/mitiko/todo-counter/issues"

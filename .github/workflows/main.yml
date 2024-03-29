@@ -20,5 +20,6 @@ jobs:
         with:
           todo-regex: 'TODO:'
           exclude-files: '^\.git'
+          debug: true
       - name: Print count
         run: echo "The count was ${{ steps.this.outputs.count }}"

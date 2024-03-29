@@ -1,24 +1,32 @@
 name: todo-counter
 author: Dimitar Rusev
 description: Counts the TODOs in your code
+branding:
+  icon: git-merge
+  color: purple
 inputs:
   include-files:
     description: Regular expression of files to include when checking for TODOs. Will not respect .gitignore
     required: false
   exclude-files:
     description: Regular expression of files to exclude when checking for TODOs
-    required: false
     default: '^(\.git|node_modules)'
+    required: false
   todo-regex:
     description: Regular expression of strings to search for
-    required: false
     default: 'TODO:'
+    required: false
+  github-token:
+    description: GitHub token for commenting on PRs
+    default: ${{ github.token }}
+    required: false
+  skip-comment:
+    description: Whether or not to skip commenting on the PR
+    default: false
+    required: false
 outputs:
   count:
     description: Count of TODOs
 runs:
   using: node20
   main: 'dist/index.js'
-branding:
-  icon: file-text
-  color: purple

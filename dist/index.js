@@ -30913,7 +30913,7 @@ const main = async () => {
     }
 
     const octokit = github.getOctokit(inputGitHubToken);
-    octokit.rest.issues.listComments({
+    const comments = octokit.rest.issues.listComments({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         issue_number: github.context.issue.number,

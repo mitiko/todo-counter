@@ -1,7 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const fs = require('fs');
-const path = require("path"); // maybe not?
+const path = require("path");
 
 async function* walk(directory) {
     for await (const d of await fs.promises.opendir(directory)) {
@@ -17,38 +17,64 @@ const main = async () => {
     const inputTodoRegex = core.getInput('todo-regex');
     const inputFilesIncludeRegex = core.getInput('include-files');
     const inputFilesExcludeRegex = core.getInput('exclude-files');
+    const inputGitHubToken = core.getInput('github-token');
+    const inputSkipComment = core.getInput('skip-comment');
 
     const todoRegex = new RegExp(inputTodoRegex);
     const filesIncludeRegex = new RegExp(inputFilesIncludeRegex);
     const filesExcludeRegex = new RegExp(inputFilesExcludeRegex);
 
-    console.log(`re1: ${todoRegex}`);
-    console.log(`re2: ${filesIncludeRegex}`);
-    console.log(`re3: ${filesExcludeRegex}`);
+    console.log(`todo: ${todoRegex}`);
+    console.log(`include-files: ${filesIncludeRegex}`);
+    console.log(`exclude-files: ${filesExcludeRegex}`);
 
-    const fileIncludeFilter = inputFilesIncludeRegex == '' ?
-        (_) => true :
-        (file) => filesIncludeRegex.test(file);
-    const fileExcludeFilter = inputFilesExcludeRegex == '' ?
-        (_) => false :
-        (file) => filesExcludeRegex.test(file);
-    const fileFilter = (file) => fileIncludeFilter(file) && !fileExcludeFilter(file);
+    const fileFilter = (file) => filesIncludeRegex.test(file) && !filesExcludeRegex.test(file);
 
     let count = 0;
     for await (const file of walk('.')) {
-        if (!fileFilter(file))
-            continue;
-
+        if (!fileFilter(file)) continue;
         const contents = await fs.promises.readFile(file, { encoding: 'utf8' });
         count += (contents.match(todoRegex) || []).length;
     }
 
     core.setOutput("count", count);
-    // TODO: count-diff?
 
-    // // Get the JSON webhook payload for the event that triggered the workflow
-    // const payload = JSON.stringify(github.context.payload, undefined, 2)
-    // console.log(`The event payload: ${payload}`);
+    if (inputSkipComment) {
+        console.log('Skipping comment.');
+        return;
+    }
+    if (github.context.eventName != 'pull_request') {
+        console.log('Not a pull request, skipping comment.');
+        return;
+    }
+
+    const octokit = github.getOctokit(inputGitHubToken);
+    octokit.rest.issues.listComments({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        issue_number: github.context.issue.number,
+    })
+    const botComment = comments.find(comment => {
+        return comment.body.includes("TODO count:")
+    });
+
+    const body = `TODO count: ${count}`;
+
+    if (botComment !== undefined) {
+        octokit.rest.issues.updateComment({
+          comment_id: botComment.id,
+          owner: github.context.repo.owner,
+          repo: github.context.repo.repo,
+          body: body,
+        })
+      } else {
+        octokit.rest.issues.createComment({
+          issue_number: github.context.issue.number,
+          owner: github.context.repo.owner,
+          repo: github.context.repo.repo,
+          body: body,
+        })
+      }
 };
 
 try {

@@ -39,7 +39,7 @@ const main = async () => {
 
     core.setOutput("count", count);
 
-    if (inputSkipComment) {
+    if (inputSkipComment == 'true') {
         console.log('Skipping comment.');
         return;
     }
@@ -62,19 +62,19 @@ const main = async () => {
 
     if (botComment !== undefined) {
         octokit.rest.issues.updateComment({
-          comment_id: botComment.id,
-          owner: github.context.repo.owner,
-          repo: github.context.repo.repo,
-          body: body,
+            comment_id: botComment.id,
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            body: body,
         })
-      } else {
+    } else {
         octokit.rest.issues.createComment({
-          issue_number: github.context.issue.number,
-          owner: github.context.repo.owner,
-          repo: github.context.repo.repo,
-          body: body,
+            issue_number: github.context.issue.number,
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            body: body,
         })
-      }
+    }
 };
 
 try {

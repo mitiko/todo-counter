@@ -3,6 +3,10 @@ on:
     branches: ["test"]
   pull_request:
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   main:
     runs-on: ubuntu-latest

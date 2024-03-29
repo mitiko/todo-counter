@@ -21,25 +21,26 @@ const main = async () => {
     const inputSkipComment = core.getInput('skip-comment');
     const inputDebug = core.getInput('debug');
 
-    const todoRegex = new RegExp(inputTodoRegex, 'm');
+    const todoRegex = new RegExp(inputTodoRegex, 'mg');
     const filesIncludeRegex = new RegExp(inputFilesIncludeRegex);
     const filesExcludeRegex = new RegExp(inputFilesExcludeRegex);
 
     console.log(`todo: ${todoRegex}`);
     console.log(`include-files: ${filesIncludeRegex}`);
-    console.log(`exclude-files: ${filesExcludeRegex}`);
+    console.log(`exclude-files: ${filesExcludeRegex}\n`);
 
     const fileFilter = (file) => filesIncludeRegex.test(file) && !filesExcludeRegex.test(file);
 
     let totalCount = 0;
     for await (const file of walk('.')) {
-        if (inputDebug == 'true') console.log(`checking file: ${file}`);
-        if (!fileFilter(file)) continue;
+        if (!fileFilter(file)) {
+            if (inputDebug == 'true') console.log(`skipping file: ${file}`);
+            continue;
+        }
 
         const contents = await fs.promises.readFile(file, { encoding: 'utf8' });
-        let count = (contents.match(todoRegex) || []).length;
-
-        if (inputDebug == 'true') console.log(`${file} -> ${count}`);
+        let count = [...contents.matchAll(todoRegex)].length;
+        console.log(`${file} -> ${count}`);
         totalCount += count;
     }
 

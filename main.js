@@ -21,7 +21,7 @@ const main = async () => {
     const inputSkipComment = core.getInput('skip-comment');
     const inputDebug = core.getInput('debug');
 
-    const todoRegex = new RegExp(inputTodoRegex);
+    const todoRegex = new RegExp(inputTodoRegex, 'm');
     const filesIncludeRegex = new RegExp(inputFilesIncludeRegex);
     const filesExcludeRegex = new RegExp(inputFilesExcludeRegex);
 

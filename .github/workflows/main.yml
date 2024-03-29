@@ -1,6 +1,6 @@
 on:
   push:
-    branches: ["test"]
+    branches: ["main"]
   pull_request:
 
 permissions:
@@ -16,10 +16,9 @@ jobs:
         uses: actions/checkout@v4
       - name: Count TODOs
         id: this
-        uses: mitiko/todo-counter@test
+        uses: mitiko/todo-counter@main
         with:
           todo-regex: 'TODO:'
           exclude-files: '^(\.git\/|dist\/)'
-          debug: true
       - name: Print count
         run: echo "The count was ${{ steps.this.outputs.count }}"
